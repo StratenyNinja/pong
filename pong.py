@@ -20,3 +20,18 @@ BALL_RADIUS = 10
 PADDLE_SPEED = 5
 BALL_SPEED = 5
 
+pygame.init()
+window = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+pygame.display.set_caption("Pong")
+clock = pygame.time.Clock()
+
+# Game loop
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    
+    window.fill(BLACK)
+    pygame.display.update()
+    clock.tick(FPS)
