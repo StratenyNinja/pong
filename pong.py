@@ -82,6 +82,10 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(paddle1)
 all_sprites.add(paddle2)
 all_sprites.add(ball)
+
+score1 = 0
+score2 = 0
+
 # Game loop
 while True:
     for event in pygame.event.get():
@@ -111,9 +115,20 @@ while True:
         ball.speed[1] = -ball.speed[1]
     if ball.rect.y >= WINDOW_H - BALL_RADIUS * 2 - BORDER_H:
         ball.speed[1] = -ball.speed[1]
+
+    if pygame.sprite.collide_mask(ball, paddle1) or pygame.sprite.collide_mask(ball, paddle2):
+        ball.bounce()
+
     window.fill(BLACK)
     draw_lines()
 
     all_sprites.draw(window)
+    
+    font = pygame.font.Font(None, 74)
+    text = font.render(str(score1), 1, WHITE)
+    window.blit(text, (250,10))
+    text = font.render(str(score2), 1, WHITE)
+    window.blit(text, (420,10))
+
     pygame.display.update()
     clock.tick(FPS)
