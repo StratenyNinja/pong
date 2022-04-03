@@ -25,6 +25,13 @@ window = pygame.display.set_mode((WINDOW_W, WINDOW_H))
 pygame.display.set_caption("Pong")
 clock = pygame.time.Clock()
 
+def draw_lines():
+    pygame.draw.rect(window, WHITE, (0, 0, BORDER_W, BORDER_H))
+    pygame.draw.rect(window, WHITE, (0, WINDOW_H - BORDER_H, BORDER_W, BORDER_H))
+    for i in range((WINDOW_H - BORDER_H * 2) // BORDER_H):
+        if i % 2 == 0:
+            pygame.draw.rect(window, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H, BORDER_H, BORDER_H))
+
 # Game loop
 while True:
     for event in pygame.event.get():
@@ -33,5 +40,6 @@ while True:
             sys.exit()
     
     window.fill(BLACK)
+    draw_lines()
     pygame.display.update()
     clock.tick(FPS)
