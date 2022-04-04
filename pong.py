@@ -55,79 +55,79 @@ class Ball(pygame.sprite.Sprite):
         self.rect.x += self.speed[0]
         self.rect.y += self.speed[1]
 
-pygame.init()
-window = pygame.display.set_mode((WINDOW_W, WINDOW_H))
-pygame.display.set_caption("Pong")
-clock = pygame.time.Clock()
 
-def draw_lines():
-    pygame.draw.rect(window, WHITE, (0, 0, BORDER_W, BORDER_H))
-    pygame.draw.rect(window, WHITE, (0, WINDOW_H - BORDER_H, BORDER_W, BORDER_H))
-    for i in range((WINDOW_H - BORDER_H * 2) // BORDER_H):
-        if i % 2 == 0:
-            pygame.draw.rect(window, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H, BORDER_H, BORDER_H))
+# Manager
+class Manager:
+    def __init__(self):
+        self.paddle1 = Paddle()
+        self.paddle1.rect.x = BALL_DIAMETER * 2
+        self.paddle1.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.paddle2 = Paddle()
+        self.paddle2.rect.x = WINDOW_W - BALL_DIAMETER * 2 - PADDLE_W
+        self.paddle2.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.ball = Ball()
+        self.ball.rect.x = (WINDOW_W - BALL_DIAMETER) // 2
+        self.ball.rect.y = (WINDOW_H + STATS_H - BALL_DIAMETER) // 2
+        self.all_sprites = pygame.sprite.Group(self.paddle1, self.paddle2, self.ball)
 
-paddle1 = Paddle()
-paddle1.rect.x = PADDLE_W
-paddle1.rect.y = WINDOW_H // 2 - PADDLE_H // 2
-paddle2 = Paddle()
-paddle2.rect.x = WINDOW_W - PADDLE_W * 2
-paddle2.rect.y = WINDOW_H // 2 - PADDLE_H // 2
-ball = Ball()
-ball.rect.x = WINDOW_W // 2
-ball.rect.y = WINDOW_H // 2
+    def draw_background(self):
+        screen.fill(BLACK)
+        pygame.draw.rect(screen, WHITE, (0, 0 + STATS_H, WINDOW_W, BORDER_H))
+        pygame.draw.rect(screen, WHITE, (0, WINDOW_H - BORDER_H, WINDOW_W, BORDER_H))
+        for i in range((WINDOW_H - STATS_H) // BORDER_H - 2):
+            if i % 2 == 0:
+                pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
 
-all_sprites = pygame.sprite.Group()
-all_sprites.add(paddle1)
-all_sprites.add(paddle2)
-all_sprites.add(ball)
+    def key_pressed(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            self.paddle1.moveUp()
+        if keys[pygame.K_s]:
+            self.paddle1.moveDown()
+        if keys[pygame.K_UP]:
+            self.paddle2.moveUp()
+        if keys[pygame.K_DOWN]:
+            self.paddle2.moveDown()
 
-score1 = 0
-score2 = 0
+    def ball_bounce(self):
+        if self.ball.rect.top <= STATS_H + BORDER_H:
+            self.ball.speed[1] = -self.ball.speed[1]
+        if self.ball.rect.bottom >= WINDOW_H - BORDER_H:
+            self.ball.speed[1] = -self.ball.speed[1]
+        if self.ball.rect.left <= 0:
+            self.ball.speed[0] = -self.ball.speed[0]
+        if self.ball.rect.right >= WINDOW_W:
+            self.ball.speed[0] = -self.ball.speed[0]
+        if pygame.sprite.collide_mask(self.ball, self.paddle1) or pygame.sprite.collide_mask(self.ball, self.paddle2):
+            self.ball.speed[0] = -self.ball.speed[0]
 
-# Game loop
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-    
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        paddle1.moveUp()
-    if keys[pygame.K_s]:
-        paddle1.moveDown()
-    if keys[pygame.K_UP]:
-        paddle2.moveUp()
-    if keys[pygame.K_DOWN]:
-        paddle2.moveDown() 
 
-    all_sprites.update()
+# Game
+class Game:
+    def __init__(self):
+        pygame.init()
+        global screen
+        screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
+        self.caption = pygame.display.set_caption("Pong")
+        self.clock = pygame.time.Clock()
+        self.icon = pygame.display.set_icon(pygame.image.load("images/icon.png"))
+        self.manager = Manager()
 
-    if ball.rect.x <= 0:
-        score2 += 1
-        ball.speed[0] = -ball.speed[0]
-    if ball.rect.x >= WINDOW_W - BALL_RADIUS * 2:
-        score1 += 1
-        ball.speed[0] = -ball.speed[0]
-    if ball.rect.y <= BORDER_H:
-        ball.speed[1] = -ball.speed[1]
-    if ball.rect.y >= WINDOW_H - BALL_RADIUS * 2 - BORDER_H:
-        ball.speed[1] = -ball.speed[1]
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-    if pygame.sprite.collide_mask(ball, paddle1) or pygame.sprite.collide_mask(ball, paddle2):
-        ball.bounce()
+            self.manager.draw_background()
+            self.manager.key_pressed()
+            self.manager.ball_bounce()
+            self.manager.all_sprites.update()
+            self.manager.all_sprites.draw(screen)
 
-    window.fill(BLACK)
-    draw_lines()
+            pygame.display.update()
+            self.clock.tick(FPS)
 
-    all_sprites.draw(window)
-    
-    font = pygame.font.Font(None, 74)
-    text = font.render(str(score1), 1, WHITE)
-    window.blit(text, (250,10))
-    text = font.render(str(score2), 1, WHITE)
-    window.blit(text, (420,10))
 
-    pygame.display.update()
-    clock.tick(FPS)
+if __name__ == "__main__":
+    game = Game()
