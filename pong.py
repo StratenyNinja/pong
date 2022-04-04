@@ -32,34 +32,28 @@ class Paddle(pygame.sprite.Sprite):
         self.image = pygame.Surface([PADDLE_W, PADDLE_H])
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        
-        pygame.draw.rect(self.image, WHITE, [0, 0, PADDLE_W, PADDLE_H])
 
     def moveUp(self):
-        if self.rect.top > BORDER_H:
+        if self.rect.top > STATS_H + BORDER_H:
             self.rect.top -= PADDLE_SPEED
 
     def moveDown(self):
         if self.rect.bottom < WINDOW_H - BORDER_H:
             self.rect.bottom += PADDLE_SPEED
 
+
 # Ball
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface([BALL_RADIUS * 2, BALL_RADIUS * 2])
+        self.image = pygame.Surface([BALL_DIAMETER, BALL_DIAMETER])
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.speed = [BALL_SPEED, BALL_SPEED]
 
-        pygame.draw.rect(self.image, WHITE, [0, 0, BALL_RADIUS * 2, BALL_RADIUS * 2])
-    
     def update(self):
         self.rect.x += self.speed[0]
         self.rect.y += self.speed[1]
-
-    def bounce(self):
-        self.speed[0] = -self.speed[0]
 
 pygame.init()
 window = pygame.display.set_mode((WINDOW_W, WINDOW_H))
