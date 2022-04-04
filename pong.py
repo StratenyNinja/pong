@@ -6,10 +6,12 @@ import sys
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+
 # Main variables
-WINDOW_W = 730
-WINDOW_H = 530
+WINDOW_W = 880
+WINDOW_H = 670
 FPS = 60
+
 
 # Game variables
 BORDER_W = WINDOW_W
