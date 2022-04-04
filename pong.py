@@ -14,13 +14,16 @@ FPS = 60
 
 
 # Game variables
-BORDER_W = WINDOW_W
+STATS_H = 100
+SCORE_W = 30
+SCORE_H = 50
 BORDER_H = 10
 PADDLE_W = 10
 PADDLE_H = 100
-BALL_RADIUS = 10
-PADDLE_SPEED = 5
-BALL_SPEED = 5
+BALL_DIAMETER = 10
+PADDLE_SPEED = 4
+BALL_SPEED = 4
+
 
 # Paddle
 class Paddle(pygame.sprite.Sprite):
