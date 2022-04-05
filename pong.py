@@ -59,16 +59,22 @@ class Ball(pygame.sprite.Sprite):
 # Manager
 class Manager:
     def __init__(self):
-        self.paddle1 = Paddle()
-        self.paddle1.rect.x = BALL_DIAMETER * 2
-        self.paddle1.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
-        self.paddle2 = Paddle()
-        self.paddle2.rect.x = WINDOW_W - BALL_DIAMETER * 2 - PADDLE_W
-        self.paddle2.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.player1 = Paddle()
+        self.player1.rect.x = BALL_DIAMETER * 2
+        self.player1.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.player2 = Paddle()
+        self.player2.rect.x = WINDOW_W - BALL_DIAMETER * 2 - PADDLE_W
+        self.player2.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
         self.ball = Ball()
         self.ball.rect.x = (WINDOW_W - BALL_DIAMETER) // 2
         self.ball.rect.y = (WINDOW_H + STATS_H - BALL_DIAMETER) // 2
-        self.all_sprites = pygame.sprite.Group(self.paddle1, self.paddle2, self.ball)
+        self.all_sprites = pygame.sprite.Group(self.player1, self.player2, self.ball)
+
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
     def draw_background(self):
         screen.fill(BLACK)
@@ -81,13 +87,13 @@ class Manager:
     def key_pressed(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.paddle1.moveUp()
+            self.player1.moveUp()
         if keys[pygame.K_s]:
-            self.paddle1.moveDown()
+            self.player1.moveDown()
         if keys[pygame.K_UP]:
-            self.paddle2.moveUp()
+            self.player2.moveUp()
         if keys[pygame.K_DOWN]:
-            self.paddle2.moveDown()
+            self.player2.moveDown()
 
     def ball_bounce(self):
         if self.ball.rect.top <= STATS_H + BORDER_H:
@@ -98,7 +104,7 @@ class Manager:
             self.ball.speed[0] = -self.ball.speed[0]
         if self.ball.rect.right >= WINDOW_W:
             self.ball.speed[0] = -self.ball.speed[0]
-        if pygame.sprite.collide_mask(self.ball, self.paddle1) or pygame.sprite.collide_mask(self.ball, self.paddle2):
+        if pygame.sprite.collide_mask(self.ball, self.player1) or pygame.sprite.collide_mask(self.ball, self.player2):
             self.ball.speed[0] = -self.ball.speed[0]
 
 
@@ -114,11 +120,8 @@ class Game:
         self.manager = Manager()
 
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
 
+            self.manager.check_events()
             self.manager.draw_background()
             self.manager.key_pressed()
             self.manager.ball_bounce()
