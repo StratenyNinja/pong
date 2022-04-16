@@ -1,4 +1,5 @@
 import pygame
+import random
 import sys
 
 
@@ -15,8 +16,7 @@ FPS = 60
 
 # Game variables
 STATS_H = 100
-SCORE_W = 30
-SCORE_H = 50
+FONT_W = 10
 BORDER_H = 10
 PADDLE_W = 10
 PADDLE_H = 100
@@ -49,7 +49,7 @@ class Ball(pygame.sprite.Sprite):
         self.image = pygame.Surface([BALL_DIAMETER, BALL_DIAMETER])
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.speed = [BALL_SPEED, BALL_SPEED]
+        self.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
     def update(self):
         self.rect.x += self.speed[0]
@@ -59,6 +59,17 @@ class Ball(pygame.sprite.Sprite):
 # Manager
 class Manager:
     def __init__(self):
+        self.running = True
+        self.click = False
+        self.logo_img = pygame.image.load("images/logo.png").convert_alpha()
+        self.logo_rect = self.logo_img.get_rect()
+        self.logo_rect.center = (WINDOW_W // 2, 165)
+        self.start_img = pygame.image.load("images/start.png").convert_alpha()
+        self.start_rect = self.start_img.get_rect()
+        self.start_rect.center = (WINDOW_W // 2, 305)
+        self.exit_img = pygame.image.load("images/exit.png").convert_alpha()
+        self.exit_rect = self.exit_img.get_rect()
+        self.exit_rect.center = (WINDOW_W // 2, 415)
         self.player1 = Paddle()
         self.player1.rect.x = BALL_DIAMETER * 2
         self.player1.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
@@ -75,6 +86,18 @@ class Manager:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.click = True
+
+    def draw_menu(self):
+        screen.fill(BLACK)
+        screen.blit(self.logo_img, self.logo_rect)
+        screen.blit(self.start_img, self.start_rect)
+        screen.blit(self.exit_img, self.exit_rect)
 
     def draw_background(self):
         screen.fill(BLACK)
@@ -120,14 +143,24 @@ class Game:
         self.manager = Manager()
 
         while True:
-
             self.manager.check_events()
-            self.manager.draw_background()
-            self.manager.key_pressed()
-            self.manager.ball_bounce()
-            self.manager.all_sprites.update()
-            self.manager.all_sprites.draw(screen)
-
+            self.manager.draw_menu()
+            mx, my = pygame.mouse.get_pos()
+            if self.manager.start_rect.collidepoint(mx, my):
+                if self.manager.click:
+                    while True:
+                        self.manager.check_events()
+                        self.manager.draw_background()
+                        self.manager.key_pressed()
+                        self.manager.ball_bounce()
+                        self.manager.all_sprites.update()
+                        self.manager.all_sprites.draw(screen)
+                        pygame.display.update()
+                        self.clock.tick(FPS)
+            if self.manager.exit_rect.collidepoint(mx, my):
+                if self.manager.click:
+                    pygame.quit()
+                    sys.exit()
             pygame.display.update()
             self.clock.tick(FPS)
 
