@@ -16,11 +16,7 @@ FPS = 60
 
 # Game variables
 STATS_H = 100
-FONT_W = 10
 BORDER_H = 10
-PADDLE_W = 10
-PADDLE_H = 100
-BALL_DIAMETER = 10
 PADDLE_SPEED = 4
 BALL_SPEED = 4
 
@@ -29,8 +25,7 @@ BALL_SPEED = 4
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface([PADDLE_W, PADDLE_H])
-        self.image.fill(WHITE)
+        self.image = pygame.image.load("images/paddle.png")
         self.rect = self.image.get_rect()
 
     def moveUp(self):
@@ -46,8 +41,7 @@ class Paddle(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface([BALL_DIAMETER, BALL_DIAMETER])
-        self.image.fill(WHITE)
+        self.image = pygame.image.load("images/ball.png")
         self.rect = self.image.get_rect()
         self.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
@@ -63,22 +57,22 @@ class Manager:
         self.click = False
         self.logo_img = pygame.image.load("images/logo.png").convert_alpha()
         self.logo_rect = self.logo_img.get_rect()
-        self.logo_rect.center = (WINDOW_W // 2, 165)
+        self.logo_rect.center = (WINDOW_W // 2, self.logo_rect.height * 2)
         self.start_img = pygame.image.load("images/start.png").convert_alpha()
         self.start_rect = self.start_img.get_rect()
-        self.start_rect.center = (WINDOW_W // 2, 305)
+        self.start_rect.center = (WINDOW_W // 2, self.logo_rect.bottom + 70 + self.start_rect.height // 2)
         self.exit_img = pygame.image.load("images/exit.png").convert_alpha()
         self.exit_rect = self.exit_img.get_rect()
-        self.exit_rect.center = (WINDOW_W // 2, 415)
+        self.exit_rect.center = (WINDOW_W // 2, self.start_rect.bottom + 20 + self.exit_rect.height // 2)
         self.player1 = Paddle()
-        self.player1.rect.x = BALL_DIAMETER * 2
-        self.player1.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.player1.rect.x = self.player1.rect.width * 2
+        self.player1.rect.y = WINDOW_H // 2
         self.player2 = Paddle()
-        self.player2.rect.x = WINDOW_W - BALL_DIAMETER * 2 - PADDLE_W
-        self.player2.rect.y = (WINDOW_H + STATS_H - PADDLE_H) // 2
+        self.player2.rect.x = WINDOW_W - self.player1.rect.width * 3
+        self.player2.rect.y = WINDOW_H // 2
         self.ball = Ball()
-        self.ball.rect.x = (WINDOW_W - BALL_DIAMETER) // 2
-        self.ball.rect.y = (WINDOW_H + STATS_H - BALL_DIAMETER) // 2
+        self.ball.rect.x = (WINDOW_W - self.player1.rect.width) // 2
+        self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
         self.all_sprites = pygame.sprite.Group(self.player1, self.player2, self.ball)
 
     def check_events(self):
@@ -101,7 +95,7 @@ class Manager:
 
     def draw_background(self):
         screen.fill(BLACK)
-        pygame.draw.rect(screen, WHITE, (0, 0 + STATS_H, WINDOW_W, BORDER_H))
+        pygame.draw.rect(screen, WHITE, (0, STATS_H, WINDOW_W, BORDER_H))
         pygame.draw.rect(screen, WHITE, (0, WINDOW_H - BORDER_H, WINDOW_W, BORDER_H))
         for i in range((WINDOW_H - STATS_H) // BORDER_H - 2):
             if i % 2 == 0:
@@ -165,6 +159,7 @@ class Game:
                 if self.manager.click:
                     pygame.quit()
                     sys.exit()
+            self.manager.click = False
             pygame.display.update()
             self.clock.tick(FPS)
 
