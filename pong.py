@@ -107,12 +107,15 @@ class Manager:
             if i % 2 == 0:
                 pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
 
-    def key_pressed(self):
+    def key_pressed_p1(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             self.player1.moveUp()
         if keys[pygame.K_s]:
             self.player1.moveDown()
+
+    def key_pressed_p2(self):
+        keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.player2.moveUp()
         if keys[pygame.K_DOWN]:
@@ -151,7 +154,8 @@ class Game:
                     while True:
                         self.manager.check_events()
                         self.manager.draw_background()
-                        self.manager.key_pressed()
+                        self.manager.key_pressed_p1()
+                        self.manager.key_pressed_p2()
                         self.manager.ball_bounce()
                         self.manager.all_sprites.update()
                         self.manager.all_sprites.draw(screen)
