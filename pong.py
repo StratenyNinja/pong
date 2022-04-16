@@ -25,7 +25,7 @@ BALL_SPEED = 4
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("images/paddle.png")
+        self.image = pygame.image.load("images/paddle.png").convert_alpha()
         self.rect = self.image.get_rect()
 
     def moveUp(self):
@@ -41,7 +41,7 @@ class Paddle(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("images/ball.png")
+        self.image = pygame.image.load("images/ball.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
