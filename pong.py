@@ -221,6 +221,11 @@ class Game:
                             
                             self.manager.check_events()
                             self.manager.draw_game()
+                            self.manager.key_pressed_p1()
+                            self.manager.key_pressed_p2()
+                            self.manager.ball_bounce()
+                            self.manager.all_sprites.update()
+                            self.manager.all_sprites.draw(screen)
 
                             mx, my = pygame.mouse.get_pos()
 
@@ -257,11 +262,6 @@ class Game:
                                     pygame.display.update()
                                     self.clock.tick(FPS)
 
-                            self.manager.key_pressed_p1()
-                            self.manager.key_pressed_p2()
-                            self.manager.ball_bounce()
-                            self.manager.all_sprites.update()
-                            self.manager.all_sprites.draw(screen)
 
                             pygame.display.update()
                             self.clock.tick(FPS)
