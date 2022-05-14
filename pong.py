@@ -218,7 +218,7 @@ class Game:
                         self.manager.game_running = True
                         while self.manager.game_running:
                             self.manager.click = False
-                            
+
                             self.manager.check_events()
                             self.manager.draw_game()
                             self.manager.key_pressed_p1()
@@ -261,7 +261,6 @@ class Game:
 
                                     pygame.display.update()
                                     self.clock.tick(FPS)
-
 
                             pygame.display.update()
                             self.clock.tick(FPS)
