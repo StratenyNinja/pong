@@ -164,8 +164,11 @@ class Game:
         self.manager = Manager()
 
         while True:
+            self.manager.click = False
+
             self.manager.check_events()
             self.manager.draw_menu()
+
             mx, my = pygame.mouse.get_pos()
             if self.manager.start_rect.collidepoint(mx, my):
                 if self.manager.click:
@@ -179,11 +182,12 @@ class Game:
                         self.manager.all_sprites.draw(screen)
                         pygame.display.update()
                         self.clock.tick(FPS)
+            # Exit
             if self.manager.exit_rect.collidepoint(mx, my):
                 if self.manager.click:
                     pygame.quit()
                     sys.exit()
-            self.manager.click = False
+
             pygame.display.update()
             self.clock.tick(FPS)
 
