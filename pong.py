@@ -139,6 +139,13 @@ class Manager:
         screen.blit(self.cpu_img, self.cpu_rect)
         screen.blit(self.back_img, self.back_rect)
 
+    def draw_pause(self):
+        screen.fill(BLACK)
+        screen.blit(self.pause_img, self.pause_rect)
+        screen.blit(self.resume_img, self.resume_rect)
+        screen.blit(self.restart_img, self.restart_rect)
+        screen.blit(self.main_menu_img, self.main_menu_rect)
+
     def key_pressed_p1(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -208,6 +215,35 @@ class Game:
                             mx, my = pygame.mouse.get_pos()
 
                             # Pause
+                            if self.manager.pause_symbol_rect.collidepoint(mx, my) and self.manager.click:
+                                self.manager.pause_running = True
+                                while self.manager.pause_running:
+                                    self.manager.click = False
+
+                                    self.manager.check_events()
+                                    self.manager.draw_pause()
+
+                                    mx, my = pygame.mouse.get_pos()
+
+                                    # Resume
+                                    if self.manager.resume_rect.collidepoint(mx, my) and self.manager.click:
+                                        self.manager.pause_running = False
+                                        self.manager.click = False
+
+                                    # Restart
+                                    if self.manager.restart_rect.collidepoint(mx, my) and self.manager.click:
+                                        self.manager.pause_running = False
+                                        self.manager.click = False
+                                    
+                                    # Main menu
+                                    if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
+                                        self.manager.pause_running = False
+                                        self.manager.game_running = False
+                                        self.manager.game_mode_running = False
+                                        self.manager.click = False
+
+                                    pygame.display.update()
+                                    self.clock.tick(FPS)
 
                             self.manager.key_pressed_p1()
                             self.manager.key_pressed_p2()
