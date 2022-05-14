@@ -197,6 +197,26 @@ class Game:
                     mx, my = pygame.mouse.get_pos()
 
                     # VS Game
+                    if self.manager.vs_rect.collidepoint(mx, my) and self.manager.click:
+                        self.manager.game_running = True
+                        while self.manager.game_running:
+                            self.manager.click = False
+                            
+                            self.manager.check_events()
+                            self.manager.draw_game()
+
+                            mx, my = pygame.mouse.get_pos()
+
+                            # Pause
+
+                            self.manager.key_pressed_p1()
+                            self.manager.key_pressed_p2()
+                            self.manager.ball_bounce()
+                            self.manager.all_sprites.update()
+                            self.manager.all_sprites.draw(screen)
+
+                            pygame.display.update()
+                            self.clock.tick(FPS)
 
                     # CPU Game
 
