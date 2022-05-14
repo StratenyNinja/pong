@@ -53,8 +53,10 @@ class Ball(pygame.sprite.Sprite):
 # Manager
 class Manager:
     def __init__(self):
-        self.running = True
         self.click = False
+        self.game_mode_running = False
+        self.game_running = False
+        self.pause_running = False
         self.logo_img = pygame.image.load("images/logo.png").convert_alpha()
         self.logo_rect = self.logo_img.get_rect()
         self.logo_rect.center = (WINDOW_W // 2, self.logo_rect.height * 2)
@@ -104,12 +106,17 @@ class Manager:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    self.running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    if self.game_mode_running:
+                        self.game_mode_running = False
+                    if self.game_running:
+                        self.pause_running = True
+                    if self.pause_running:
+                        self.pause_running = False
 
     def draw_menu(self):
         screen.fill(BLACK)
@@ -117,7 +124,7 @@ class Manager:
         screen.blit(self.start_img, self.start_rect)
         screen.blit(self.exit_img, self.exit_rect)
 
-    def draw_background(self):
+    def draw_game(self):
         screen.fill(BLACK)
         pygame.draw.rect(screen, WHITE, (0, STATS_H, WINDOW_W, BORDER_H))
         pygame.draw.rect(screen, WHITE, (0, WINDOW_H - BORDER_H, WINDOW_W, BORDER_H))
