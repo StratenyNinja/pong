@@ -131,6 +131,7 @@ class Manager:
         for i in range((WINDOW_H - STATS_H) // BORDER_H - 2):
             if i % 2 == 0:
                 pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
+        screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
 
     def key_pressed_p1(self):
         keys = pygame.key.get_pressed()
