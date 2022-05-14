@@ -133,6 +133,12 @@ class Manager:
                 pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
         screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
 
+    def draw_game_mode(self):
+        screen.fill(BLACK)
+        screen.blit(self.vs_img, self.vs_rect)
+        screen.blit(self.cpu_img, self.cpu_rect)
+        screen.blit(self.back_img, self.back_rect)
+
     def key_pressed_p1(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -178,6 +184,31 @@ class Game:
             self.manager.draw_menu()
 
             mx, my = pygame.mouse.get_pos()
+
+            # Game mode
+            if self.manager.start_rect.collidepoint(mx, my) and self.manager.click:
+                self.manager.game_mode_running = True
+                while self.manager.game_mode_running:
+                    self.manager.click = False
+
+                    self.manager.check_events()
+                    self.manager.draw_game_mode()
+
+                    mx, my = pygame.mouse.get_pos()
+
+                    # VS Game
+
+                    # CPU Game
+
+                    # Back
+                    if self.manager.back_rect.collidepoint(mx, my):
+                        if self.manager.click:
+                            self.manager.game_mode_running = False
+                            self.manager.click = False
+
+                    pygame.display.update()
+                    self.clock.tick(FPS)
+
             # Exit
             if self.manager.exit_rect.collidepoint(mx, my):
                 if self.manager.click:
