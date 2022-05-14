@@ -171,6 +171,16 @@ class Manager:
             self.ball.speed[0] = -self.ball.speed[0]
         if pygame.sprite.collide_mask(self.ball, self.player1) or pygame.sprite.collide_mask(self.ball, self.player2):
             self.ball.speed[0] = -self.ball.speed[0]
+    
+    def restart_game(self):
+        self.ball.rect.center = (WINDOW_W // 2, WINDOW_H // 2)
+        self.player1.rect.x = self.player1.rect.width * 2
+        self.player1.rect.y = WINDOW_H // 2
+        self.player2.rect.x = WINDOW_W - self.player1.rect.width * 3
+        self.player2.rect.y = WINDOW_H // 2
+        self.ball.rect.x = (WINDOW_W - self.player1.rect.width) // 2
+        self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
+        self.ball.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
 
 # Game
@@ -234,6 +244,7 @@ class Game:
                                     if self.manager.restart_rect.collidepoint(mx, my) and self.manager.click:
                                         self.manager.pause_running = False
                                         self.manager.click = False
+                                        self.manager.restart_game()
                                     
                                     # Main menu
                                     if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
@@ -241,6 +252,7 @@ class Game:
                                         self.manager.game_running = False
                                         self.manager.game_mode_running = False
                                         self.manager.click = False
+                                        self.manager.restart_game()
 
                                     pygame.display.update()
                                     self.clock.tick(FPS)
