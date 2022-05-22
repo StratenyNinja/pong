@@ -115,8 +115,6 @@ class Manager:
                         self.game_mode_running = False
                     if self.game_running:
                         self.pause_running = True
-                    if self.pause_running:
-                        self.pause_running = False
 
     def draw_menu(self):
         screen.fill(BLACK)
@@ -230,7 +228,7 @@ class Game:
                             mx, my = pygame.mouse.get_pos()
 
                             # Pause
-                            if self.manager.pause_symbol_rect.collidepoint(mx, my) and self.manager.click:
+                            if (self.manager.pause_symbol_rect.collidepoint(mx, my) and self.manager.click) or self.manager.pause_running:
                                 self.manager.pause_running = True
                                 while self.manager.pause_running:
                                     self.manager.click = False
