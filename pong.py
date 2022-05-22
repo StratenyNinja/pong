@@ -27,6 +27,7 @@ class Paddle(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("images/paddle.png").convert_alpha()
         self.rect = self.image.get_rect()
+        self.score = 0
 
     def moveUp(self):
         if self.rect.top > STATS_H + BORDER_H:
@@ -122,6 +123,12 @@ class Manager:
         screen.blit(self.start_img, self.start_rect)
         screen.blit(self.exit_img, self.exit_rect)
 
+    def draw_game_mode(self):
+        screen.fill(BLACK)
+        screen.blit(self.vs_img, self.vs_rect)
+        screen.blit(self.cpu_img, self.cpu_rect)
+        screen.blit(self.back_img, self.back_rect)
+
     def draw_game(self):
         screen.fill(BLACK)
         pygame.draw.rect(screen, WHITE, (0, STATS_H, WINDOW_W, BORDER_H))
@@ -130,12 +137,6 @@ class Manager:
             if i % 2 == 0:
                 pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
         screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
-
-    def draw_game_mode(self):
-        screen.fill(BLACK)
-        screen.blit(self.vs_img, self.vs_rect)
-        screen.blit(self.cpu_img, self.cpu_rect)
-        screen.blit(self.back_img, self.back_rect)
 
     def draw_pause(self):
         screen.fill(BLACK)
@@ -163,10 +164,6 @@ class Manager:
             self.ball.speed[1] = -self.ball.speed[1]
         if self.ball.rect.bottom >= WINDOW_H - BORDER_H:
             self.ball.speed[1] = -self.ball.speed[1]
-        if self.ball.rect.left <= 0:
-            self.ball.speed[0] = -self.ball.speed[0]
-        if self.ball.rect.right >= WINDOW_W:
-            self.ball.speed[0] = -self.ball.speed[0]
         if pygame.sprite.collide_mask(self.ball, self.player1) or pygame.sprite.collide_mask(self.ball, self.player2):
             self.ball.speed[0] = -self.ball.speed[0]
     
@@ -180,6 +177,13 @@ class Manager:
         self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
         self.ball.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
+    def score_update(self):
+        if self.ball.rect.x <= 0:
+            self.player2.score += 1
+            self.restart_game()
+        if self.ball.rect.x >= WINDOW_W - self.ball.rect.width:
+            self.player1.score += 1
+            self.restart_game()
 
 # Game
 class Game:
@@ -219,6 +223,7 @@ class Game:
 
                             self.manager.check_events()
                             self.manager.draw_game()
+                            self.manager.score_update()
                             self.manager.key_pressed_p1()
                             self.manager.key_pressed_p2()
                             self.manager.ball_bounce()
