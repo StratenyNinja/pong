@@ -253,6 +253,8 @@ class Game:
                                         self.manager.pause_running = False
                                         self.manager.click = False
                                         self.manager.restart_game()
+                                        self.manager.player1.score = 0
+                                        self.manager.player2.score = 0
                                     
                                     # Main menu
                                     if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
@@ -261,6 +263,8 @@ class Game:
                                         self.manager.game_mode_running = False
                                         self.manager.click = False
                                         self.manager.restart_game()
+                                        self.manager.player1.score = 0
+                                        self.manager.player2.score = 0
 
                                     pygame.display.update()
                                     self.clock.tick(FPS)
