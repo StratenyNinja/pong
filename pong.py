@@ -18,10 +18,10 @@ FPS = 60
 STATS_H = 100
 BORDER_H = 10
 PADDLE_SPEED = 4
-BALL_SPEED = 4
+BALL_SPEED = 5
 
 
-# Paddle
+# Paddle / Player
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -178,11 +178,11 @@ class Manager:
         self.ball.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
     def score_update(self):
-        if self.ball.rect.x <= 0:
-            self.player2.score += 1
-            self.restart_game()
         if self.ball.rect.x >= WINDOW_W - self.ball.rect.width:
             self.player1.score += 1
+            self.restart_game()
+        if self.ball.rect.x <= 0:
+            self.player2.score += 1
             self.restart_game()
 
 # Game
@@ -255,7 +255,7 @@ class Game:
                                         self.manager.restart_game()
                                         self.manager.player1.score = 0
                                         self.manager.player2.score = 0
-                                    
+
                                     # Main menu
                                     if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
                                         self.manager.pause_running = False
