@@ -142,7 +142,7 @@ class Manager:
         self.player2.rect.x = WINDOW_W - self.player1.rect.width * 3
         self.player2.rect.y = WINDOW_H // 2
         self.ball = Ball()
-        self.ball.rect.x = (WINDOW_W - self.player1.rect.width) // 2
+        self.ball.rect.x = (WINDOW_W - self.player1.rect.width * 2) // 2
         self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
         self.all_sprites = pygame.sprite.Group(self.player1, self.player2, self.ball)
 
