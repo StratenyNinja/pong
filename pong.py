@@ -102,12 +102,10 @@ class Manager:
         self.game_mode_running = False
         self.game_running = False
         self.pause_running = False
-        self.logo_img = pygame.image.load("images/logo.png").convert_alpha()
-        self.logo_rect = self.logo_img.get_rect()
-        self.logo_rect.center = (WINDOW_W // 2, self.logo_rect.height * 2)
+        self.background_menu = pygame.image.load("images/background_menu.png").convert_alpha()
         self.start_img = pygame.image.load("images/start.png").convert_alpha()
         self.start_rect = self.start_img.get_rect()
-        self.start_rect.center = (WINDOW_W // 2, self.logo_rect.bottom + 70 + self.start_rect.height // 2)
+        self.start_rect.center = (WINDOW_W // 2, 320 + self.start_rect.height // 2)
         self.exit_img = pygame.image.load("images/exit.png").convert_alpha()
         self.exit_rect = self.exit_img.get_rect()
         self.exit_rect.center = (WINDOW_W // 2, self.start_rect.bottom + 20 + self.exit_rect.height // 2)
@@ -162,8 +160,7 @@ class Manager:
                         self.pause_running = True
 
     def draw_menu(self):
-        screen.fill(BLACK)
-        screen.blit(self.logo_img, self.logo_rect)
+        screen.blit(self.background_menu, (0, 0))
         screen.blit(self.start_img, self.start_rect)
         screen.blit(self.exit_img, self.exit_rect)
 
