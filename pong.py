@@ -189,7 +189,7 @@ class Manager:
 
     def reset_game(self):
         self.player1.score = self.player2.score = 0
-        self.manager.ball.image = self.manager.ball.image_normal
+        self.ball.image = self.ball.image_normal
 
     def score_update(self):
         if self.ball.rect.x >= WINDOW_W - self.ball.rect.width:
