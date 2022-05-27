@@ -134,11 +134,10 @@ class Manager:
         self.pause_symbol_rect = self.pause_symbol_img.get_rect()
         self.pause_symbol_rect.center = (WINDOW_W // 2, self.pause_symbol_rect.height - 20)
         self.player1 = Paddle()
-        self.player1.rect.x = self.player1.rect.width * 2
-        self.player1.rect.y = WINDOW_H // 2
         self.player2 = Paddle()
+        self.player1.rect.x = self.player1.rect.width * 2
         self.player2.rect.x = WINDOW_W - self.player1.rect.width * 3
-        self.player2.rect.y = WINDOW_H // 2
+        self.player1.rect.y = self.player2.rect.y = WINDOW_H // 2
         self.ball = Ball()
         self.ball.rect.x = (WINDOW_W - self.player1.rect.width * 2) // 2
         self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
