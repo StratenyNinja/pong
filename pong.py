@@ -3,11 +3,6 @@ import random
 import sys
 
 
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
-
 # Main variables
 WINDOW_W = 880
 WINDOW_H = 670
@@ -72,7 +67,9 @@ class Manager:
         self.game_running = False
         self.pause_running = False
         self.background_menu = pygame.image.load("images/background_menu.png").convert_alpha()
+        self.background_game_mode = pygame.image.load("images/background_game_mode.png").convert_alpha()
         self.background_game = pygame.image.load("images/background_game.png").convert_alpha()
+        self.background_pause = pygame.image.load("images/background_pause.png").convert_alpha()
         self.start_img = pygame.image.load("images/start.png").convert_alpha()
         self.start_rect = self.start_img.get_rect()
         self.start_rect.center = (WINDOW_W // 2, 320 + self.start_rect.height // 2)
@@ -81,10 +78,10 @@ class Manager:
         self.exit_rect.center = (WINDOW_W // 2, self.start_rect.bottom + 20 + self.exit_rect.height // 2)
         self.pause_img = pygame.image.load("images/pause.png").convert_alpha()
         self.pause_rect = self.pause_img.get_rect()
-        self.pause_rect.center = (WINDOW_W // 2, self.pause_rect.height * 2)
+        self.pause_rect.center = (WINDOW_W // 2, STATS_H // 2)
         self.resume_img = pygame.image.load("images/resume.png").convert_alpha()
         self.resume_rect = self.resume_img.get_rect()
-        self.resume_rect.center = (WINDOW_W // 2, self.pause_rect.bottom + 70 + self.resume_rect.height // 2)
+        self.resume_rect.center = (WINDOW_W // 2, 320 + self.resume_rect.height // 2)
         self.restart_img = pygame.image.load("images/restart.png").convert_alpha()
         self.restart_rect = self.restart_img.get_rect()
         self.restart_rect.center = (WINDOW_W // 2, self.resume_rect.bottom + 20 + self.restart_rect.height // 2)
@@ -93,16 +90,13 @@ class Manager:
         self.main_menu_rect.center = (WINDOW_W // 2, self.restart_rect.bottom + 20 + self.main_menu_rect.height // 2)
         self.vs_img = pygame.image.load("images/vs.png").convert_alpha()
         self.vs_rect = self.vs_img.get_rect()
-        self.vs_rect.center = (WINDOW_W // 3, WINDOW_H // 2)
-        self.cpu_img = pygame.image.load("images/cpu.png").convert_alpha()
-        self.cpu_rect = self.cpu_img.get_rect()
-        self.cpu_rect.center = (WINDOW_W // 3 * 2, WINDOW_H // 2)
+        self.vs_rect.center = (240 + self.vs_rect.width // 2, 320 + self.vs_rect.height // 2)
+        self.pc_img = pygame.image.load("images/pc.png").convert_alpha()
+        self.pc_rect = self.pc_img.get_rect()
+        self.pc_rect.center = (self.vs_rect.right + 100 + self.pc_rect.width // 2, 320 + self.pc_rect.height // 2)
         self.back_img = pygame.image.load("images/back.png").convert_alpha()
         self.back_rect = self.back_img.get_rect()
         self.back_rect.center = (WINDOW_W // 2, self.vs_rect.bottom + 20 + self.back_rect.height // 2)
-        self.pause_symbol_img = pygame.image.load("images/pause_symbol.png").convert_alpha()
-        self.pause_symbol_rect = self.pause_symbol_img.get_rect()
-        self.pause_symbol_rect.center = (WINDOW_W // 2, self.pause_symbol_rect.height - 20)
         self.player1 = Paddle()
         self.player2 = Paddle()
         self.player1.rect.x = self.player1.rect.width * 2
@@ -134,15 +128,15 @@ class Manager:
         screen.blit(self.exit_img, self.exit_rect)
 
     def draw_game_mode(self):
-        screen.fill(BLACK)
+        screen.blit(self.background_game_mode, (0, 0))
         screen.blit(self.vs_img, self.vs_rect)
-        screen.blit(self.cpu_img, self.cpu_rect)
+        screen.blit(self.pc_img, self.pc_rect)
         screen.blit(self.back_img, self.back_rect)
 
     def draw_game(self):
         if self.player1.score <= 99 and self.player2.score <= 99:
             screen.blit(self.background_game, (0, 0))
-            screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
+            screen.blit(self.pause_img, self.pause_rect)
             score1 = "0" * (2 - len(str(self.player1.score))) + str(self.player1.score)
             score2 = "0" * (2 - len(str(self.player2.score))) + str(self.player2.score)
             screen.blit(self.player1.numbers[int(score1[0])], (25, 25))
@@ -151,8 +145,7 @@ class Manager:
             screen.blit(self.player1.numbers[int(score2[1])], (WINDOW_W - 55, 25))
 
     def draw_pause(self):
-        screen.fill(BLACK)
-        screen.blit(self.pause_img, self.pause_rect)
+        screen.blit(self.background_pause, (0, 0))
         screen.blit(self.resume_img, self.resume_rect)
         screen.blit(self.restart_img, self.restart_rect)
         screen.blit(self.main_menu_img, self.main_menu_rect)
@@ -229,7 +222,7 @@ class Game:
 
                     mx, my = pygame.mouse.get_pos()
 
-                    # VS Game
+                    # VS
                     if self.manager.vs_rect.collidepoint(mx, my) and self.manager.click:
                         self.manager.game_running = True
                         while self.manager.game_running:
@@ -247,7 +240,7 @@ class Game:
                             mx, my = pygame.mouse.get_pos()
 
                             # Pause
-                            if (self.manager.pause_symbol_rect.collidepoint(mx, my) and self.manager.click) or self.manager.pause_running:
+                            if (self.manager.pause_rect.collidepoint(mx, my) and self.manager.click) or self.manager.pause_running:
                                 self.manager.pause_running = True
                                 while self.manager.pause_running:
                                     self.manager.click = False
@@ -284,7 +277,7 @@ class Game:
                             pygame.display.update()
                             self.clock.tick(FPS)
 
-                    # CPU Game
+                    # PC
 
                     # Back
                     if self.manager.back_rect.collidepoint(mx, my):
