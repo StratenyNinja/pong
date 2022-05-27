@@ -54,7 +54,8 @@ class Paddle(pygame.sprite.Sprite):
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("images/ball.png").convert_alpha()
+        self.image = self.image_normal = pygame.image.load("images/ball.png").convert_alpha()
+        self.image_cursed = pygame.image.load("images/ball_cursed.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
 
@@ -71,6 +72,7 @@ class Manager:
         self.game_running = False
         self.pause_running = False
         self.background_menu = pygame.image.load("images/background_menu.png").convert_alpha()
+        self.background_game = pygame.image.load("images/background_game.png").convert_alpha()
         self.start_img = pygame.image.load("images/start.png").convert_alpha()
         self.start_rect = self.start_img.get_rect()
         self.start_rect.center = (WINDOW_W // 2, 320 + self.start_rect.height // 2)
