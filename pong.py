@@ -30,47 +30,15 @@ class Paddle(pygame.sprite.Sprite):
         self.score = 0
         self.numbers = [
             pygame.image.load("images/0.png").convert_alpha(),
-            pygame.image.load("images/0.png").convert_alpha().get_rect(),
             pygame.image.load("images/1.png").convert_alpha(),
-            pygame.image.load("images/1.png").convert_alpha().get_rect(),
             pygame.image.load("images/2.png").convert_alpha(),
-            pygame.image.load("images/2.png").convert_alpha().get_rect(),
             pygame.image.load("images/3.png").convert_alpha(),
-            pygame.image.load("images/3.png").convert_alpha().get_rect(),
             pygame.image.load("images/4.png").convert_alpha(),
-            pygame.image.load("images/4.png").convert_alpha().get_rect(),
             pygame.image.load("images/5.png").convert_alpha(),
-            pygame.image.load("images/5.png").convert_alpha().get_rect(),
             pygame.image.load("images/6.png").convert_alpha(),
-            pygame.image.load("images/6.png").convert_alpha().get_rect(),
             pygame.image.load("images/7.png").convert_alpha(),
-            pygame.image.load("images/7.png").convert_alpha().get_rect(),
             pygame.image.load("images/8.png").convert_alpha(),
-            pygame.image.load("images/8.png").convert_alpha().get_rect(),
             pygame.image.load("images/9.png").convert_alpha(),
-            pygame.image.load("images/9.png").convert_alpha().get_rect(),
-        ]
-        self.numbers2 = [
-            pygame.image.load("images/0.png").convert_alpha(),
-            pygame.image.load("images/0.png").convert_alpha().get_rect(),
-            pygame.image.load("images/1.png").convert_alpha(),
-            pygame.image.load("images/1.png").convert_alpha().get_rect(),
-            pygame.image.load("images/2.png").convert_alpha(),
-            pygame.image.load("images/2.png").convert_alpha().get_rect(),
-            pygame.image.load("images/3.png").convert_alpha(),
-            pygame.image.load("images/3.png").convert_alpha().get_rect(),
-            pygame.image.load("images/4.png").convert_alpha(),
-            pygame.image.load("images/4.png").convert_alpha().get_rect(),
-            pygame.image.load("images/5.png").convert_alpha(),
-            pygame.image.load("images/5.png").convert_alpha().get_rect(),
-            pygame.image.load("images/6.png").convert_alpha(),
-            pygame.image.load("images/6.png").convert_alpha().get_rect(),
-            pygame.image.load("images/7.png").convert_alpha(),
-            pygame.image.load("images/7.png").convert_alpha().get_rect(),
-            pygame.image.load("images/8.png").convert_alpha(),
-            pygame.image.load("images/8.png").convert_alpha().get_rect(),
-            pygame.image.load("images/9.png").convert_alpha(),
-            pygame.image.load("images/9.png").convert_alpha().get_rect(),
         ]
 
     def moveUp(self):
@@ -170,31 +138,15 @@ class Manager:
         screen.blit(self.back_img, self.back_rect)
 
     def draw_game(self):
-        screen.fill(BLACK)
-        pygame.draw.rect(screen, WHITE, (0, STATS_H, WINDOW_W, BORDER_H))
-        pygame.draw.rect(screen, WHITE, (0, WINDOW_H - BORDER_H, WINDOW_W, BORDER_H))
-        for i in range((WINDOW_H - STATS_H) // BORDER_H - 2):
-            if i % 2 == 0:
-                pygame.draw.rect(screen, WHITE, ((WINDOW_W - BORDER_H) // 2, i * BORDER_H + STATS_H, BORDER_H, BORDER_H))
-        screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
-        if self.player1.score <= 255 or self.player2.score <= 255:
-            score1, score2 = str(self.player1.score), str(self.player2.score)
-            if len(score1) != 2:
-                score1 = "0" * (2 - len(score1)) + score1
-            if len(score2) != 2:
-                score2 = "0" * (2 - len(score2)) + score2
-            img1, rect1 = self.player1.numbers[int(score1[0])*2], self.player1.numbers[int(score1[0])*2+1]
-            img2, rect2 = self.player1.numbers2[int(score1[1])*2], self.player1.numbers2[int(score1[1])*2+1]
-            img3, rect3 = self.player2.numbers[int(score2[0])*2], self.player2.numbers[int(score2[0])*2+1]
-            img4, rect4 = self.player2.numbers2[int(score2[1])*2], self.player2.numbers2[int(score2[1])*2+1]
-            rect1.center = (40, 50)
-            rect2.center = (80, 50)
-            rect3.center = (WINDOW_W - 80, 50)
-            rect4.center = (WINDOW_W - 40, 50)
-            screen.blit(img1, rect1)
-            screen.blit(img2, rect2)
-            screen.blit(img3, rect3)
-            screen.blit(img4, rect4)
+        if self.player1.score <= 99 and self.player2.score <= 99:
+            screen.blit(self.background_game, (0, 0))
+            screen.blit(self.pause_symbol_img, self.pause_symbol_rect)
+            score1 = "0" * (2 - len(str(self.player1.score))) + str(self.player1.score)
+            score2 = "0" * (2 - len(str(self.player2.score))) + str(self.player2.score)
+            screen.blit(self.player1.numbers[int(score1[0])], (25, 25))
+            screen.blit(self.player1.numbers[int(score1[1])], (65, 25))
+            screen.blit(self.player1.numbers[int(score2[0])], (WINDOW_W - 95, 25))
+            screen.blit(self.player1.numbers[int(score2[1])], (WINDOW_W - 55, 25))
 
     def draw_pause(self):
         screen.fill(BLACK)
@@ -232,6 +184,10 @@ class Manager:
         self.ball.rect.x = (WINDOW_W - self.player1.rect.width * 2) // 2
         self.ball.rect.y = (WINDOW_H + STATS_H - self.ball.rect.height) // 2
         self.ball.speed = [random.choice([-BALL_SPEED, BALL_SPEED]), random.choice([-BALL_SPEED, BALL_SPEED])]
+
+    def reset_game(self):
+        self.player1.score = self.player2.score = 0
+        self.manager.ball.image = self.manager.ball.image_normal
 
     def score_update(self):
         if self.ball.rect.x >= WINDOW_W - self.ball.rect.width:
@@ -309,8 +265,7 @@ class Game:
                                         self.manager.pause_running = False
                                         self.manager.click = False
                                         self.manager.restart_game()
-                                        self.manager.player1.score = 0
-                                        self.manager.player2.score = 0
+                                        self.manager.reset_game()
 
                                     # Main menu
                                     if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
@@ -319,8 +274,7 @@ class Game:
                                         self.manager.game_mode_running = False
                                         self.manager.click = False
                                         self.manager.restart_game()
-                                        self.manager.player1.score = 0
-                                        self.manager.player2.score = 0
+                                        self.manager.reset_game()
 
                                     pygame.display.update()
                                     self.clock.tick(FPS)
