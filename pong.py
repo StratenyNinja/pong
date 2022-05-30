@@ -66,6 +66,8 @@ class Manager:
         self.game_mode_running = False
         self.game_running = False
         self.pause_running = False
+        self.vs_game = False
+        self.cpu_game = False
         self.background_menu = pygame.image.load("images/background_menu.png").convert_alpha()
         self.background_game_mode = pygame.image.load("images/background_game_mode.png").convert_alpha()
         self.background_game = pygame.image.load("images/background_game.png").convert_alpha()
@@ -164,6 +166,12 @@ class Manager:
         if keys[pygame.K_DOWN]:
             self.player2.moveDown()
 
+    def cpu_move(self):
+        if self.ball.rect.top < self.player2.rect.top:
+            self.player2.moveUp()
+        if self.ball.rect.bottom > self.player2.rect.bottom:
+            self.player2.moveDown()
+
     def ball_bounce(self):
         if self.ball.rect.top <= STATS_H + BORDER_H:
             self.ball.speed[1] = -self.ball.speed[1]
@@ -226,58 +234,69 @@ class Game:
                     # VS Game
                     if self.manager.vs_rect.collidepoint(mx, my) and self.manager.click:
                         self.manager.game_running = True
-                        while self.manager.game_running:
-                            self.manager.click = False
+                        self.manager.vs_game = True
+                        self.manager.cpu_game = False
+                    
+                    # CPU Game
+                    if self.manager.cpu_rect.collidepoint(mx, my) and self.manager.click:
+                        self.manager.game_running = True
+                        self.manager.vs_game = False
+                        self.manager.cpu_game = True
 
-                            self.manager.check_events()
-                            self.manager.draw_game()
-                            self.manager.score_update()
-                            self.manager.key_pressed_p1()
+                    while self.manager.game_running:
+                        self.manager.click = False
+
+                        self.manager.check_events()
+                        self.manager.draw_game()
+                        self.manager.score_update()
+                        self.manager.key_pressed_p1()
+                        if self.manager.vs_game:
                             self.manager.key_pressed_p2()
-                            self.manager.ball_bounce()
-                            self.manager.all_sprites.update()
-                            self.manager.all_sprites.draw(screen)
+                        if self.manager.cpu_game:
+                            self.manager.cpu_move()
+                        self.manager.ball_bounce()
+                        self.manager.all_sprites.update()
+                        self.manager.all_sprites.draw(screen)
 
-                            mx, my = pygame.mouse.get_pos()
+                        mx, my = pygame.mouse.get_pos()
 
-                            # Pause
-                            if (self.manager.pause_rect.collidepoint(mx, my) and self.manager.click) or self.manager.pause_running:
-                                self.manager.pause_running = True
-                                while self.manager.pause_running:
+                        # Pause
+                        if (self.manager.pause_rect.collidepoint(mx, my) and self.manager.click) or self.manager.pause_running:
+                            self.manager.pause_running = True
+                            while self.manager.pause_running:
+                                self.manager.click = False
+
+                                self.manager.check_events()
+                                self.manager.draw_pause()
+
+                                mx, my = pygame.mouse.get_pos()
+
+                                # Resume
+                                if self.manager.resume_rect.collidepoint(mx, my) and self.manager.click:
+                                    self.manager.pause_running = False
                                     self.manager.click = False
 
-                                    self.manager.check_events()
-                                    self.manager.draw_pause()
+                                # Restart
+                                if self.manager.restart_rect.collidepoint(mx, my) and self.manager.click:
+                                    self.manager.pause_running = False
+                                    self.manager.click = False
+                                    self.manager.restart_game()
+                                    self.manager.reset_game()
 
-                                    mx, my = pygame.mouse.get_pos()
+                                # Main menu
+                                if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
+                                    self.manager.pause_running = False
+                                    self.manager.game_running = False
+                                    self.manager.game_mode_running = False
+                                    self.manager.click = False
+                                    self.manager.restart_game()
+                                    self.manager.reset_game()
 
-                                    # Resume
-                                    if self.manager.resume_rect.collidepoint(mx, my) and self.manager.click:
-                                        self.manager.pause_running = False
-                                        self.manager.click = False
+                                pygame.display.update()
+                                self.clock.tick(FPS)
 
-                                    # Restart
-                                    if self.manager.restart_rect.collidepoint(mx, my) and self.manager.click:
-                                        self.manager.pause_running = False
-                                        self.manager.click = False
-                                        self.manager.restart_game()
-                                        self.manager.reset_game()
-
-                                    # Main menu
-                                    if self.manager.main_menu_rect.collidepoint(mx, my) and self.manager.click:
-                                        self.manager.pause_running = False
-                                        self.manager.game_running = False
-                                        self.manager.game_mode_running = False
-                                        self.manager.click = False
-                                        self.manager.restart_game()
-                                        self.manager.reset_game()
-
-                                    pygame.display.update()
-                                    self.clock.tick(FPS)
-
-                            pygame.display.update()
-                            self.clock.tick(FPS)
-
+                        pygame.display.update()
+                        self.clock.tick(FPS)
 
                     # Back
                     if self.manager.back_rect.collidepoint(mx, my) and self.manager.click:
