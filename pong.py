@@ -12,7 +12,7 @@ FPS = 60
 # Game variables
 STATS_H = 100
 BORDER_H = 10
-PADDLE_SPEED = 4
+PADDLE_SPEED = 3
 BALL_SPEED = 5
 
 
@@ -91,9 +91,9 @@ class Manager:
         self.vs_img = pygame.image.load("images/vs.png").convert_alpha()
         self.vs_rect = self.vs_img.get_rect()
         self.vs_rect.center = (240 + self.vs_rect.width // 2, 320 + self.vs_rect.height // 2)
-        self.pc_img = pygame.image.load("images/pc.png").convert_alpha()
-        self.pc_rect = self.pc_img.get_rect()
-        self.pc_rect.center = (self.vs_rect.right + 100 + self.pc_rect.width // 2, 320 + self.pc_rect.height // 2)
+        self.cpu_img = pygame.image.load("images/cpu.png").convert_alpha()
+        self.cpu_rect = self.cpu_img.get_rect()
+        self.cpu_rect.center = (WINDOW_W - 240 - self.cpu_rect.width // 2, 320 + self.cpu_rect.height // 2)
         self.back_img = pygame.image.load("images/back.png").convert_alpha()
         self.back_rect = self.back_img.get_rect()
         self.back_rect.center = (WINDOW_W // 2, self.vs_rect.bottom + 20 + self.back_rect.height // 2)
@@ -130,7 +130,7 @@ class Manager:
     def draw_game_mode(self):
         screen.blit(self.background_game_mode, (0, 0))
         screen.blit(self.vs_img, self.vs_rect)
-        screen.blit(self.pc_img, self.pc_rect)
+        screen.blit(self.cpu_img, self.cpu_rect)
         screen.blit(self.back_img, self.back_rect)
 
     def draw_game(self):
@@ -192,6 +192,7 @@ class Manager:
             self.player2.score += 1
             self.restart_game()
 
+
 # Game
 class Game:
     def __init__(self):
@@ -222,7 +223,7 @@ class Game:
 
                     mx, my = pygame.mouse.get_pos()
 
-                    # VS
+                    # VS Game
                     if self.manager.vs_rect.collidepoint(mx, my) and self.manager.click:
                         self.manager.game_running = True
                         while self.manager.game_running:
@@ -277,22 +278,19 @@ class Game:
                             pygame.display.update()
                             self.clock.tick(FPS)
 
-                    # PC
 
                     # Back
-                    if self.manager.back_rect.collidepoint(mx, my):
-                        if self.manager.click:
-                            self.manager.game_mode_running = False
-                            self.manager.click = False
+                    if self.manager.back_rect.collidepoint(mx, my) and self.manager.click:
+                        self.manager.game_mode_running = False
+                        self.manager.click = False
 
                     pygame.display.update()
                     self.clock.tick(FPS)
 
             # Exit
-            if self.manager.exit_rect.collidepoint(mx, my):
-                if self.manager.click:
-                    pygame.quit()
-                    sys.exit()
+            if self.manager.exit_rect.collidepoint(mx, my) and self.manager.click:
+                pygame.quit()
+                sys.exit()
 
             pygame.display.update()
             self.clock.tick(FPS)
